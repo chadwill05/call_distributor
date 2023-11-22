@@ -18,14 +18,14 @@ def load_csv_file():
         file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if file_path:
             data = pd.read_csv(file_path)
-            if 'Name' in data.columns and 'Phone Number' in data.columns:
-                call_list = data[['Name', 'Phone Number']].values.tolist()
+            if all(col in data.columns for col in ['Name', 'Phone Number', 'Company']):
+                call_list = data[['Name', 'Phone Number', 'Company']].values.tolist()
                 random.shuffle(call_list)
                 assign_calls_to_all()
                 enable_load_more_buttons()
                 messagebox.showinfo("Success", "File loaded and initial calls assigned!")
             else:
-                messagebox.showerror("Error", "CSV file does not have the required columns (Name, Phone Number).")
+                messagebox.showerror("Error", "CSV file does not have the required columns (Name, Phone Number, Company).")
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred: {e}")
 
@@ -55,7 +55,8 @@ def update_caller_listbox(caller):
     listbox = caller_listboxes[caller]
     listbox.delete(0, tk.END)
     for contact in caller_call_lists[caller]:
-        listbox.insert(tk.END, f"{contact[0]} - {contact[1]}")
+        listbox.insert(tk.END, f"{contact[0]} - {contact[1]} - {contact[2]}")  # Include company
+
 
 def update_caller_count(caller):
     count = len(caller_call_lists[caller])
